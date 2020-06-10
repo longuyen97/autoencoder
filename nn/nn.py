@@ -1,16 +1,21 @@
-import numpy as np
-from nn.activations import softmax, relu, cat_cross_entropy, ActivationFunction, Relu, LossFunction, CatCrossEntropy
-from nn.activations import Softmax, Linear
 import typing
+
+import numpy as np
+
+from nn.activations import ActivationFunction, LossFunction
+from nn.activations import Linear
 
 
 class NeuralNetwork:
-    def __init__(self, layers: typing.List):
+    def __init__(self, layers: typing.List, activation: ActivationFunction, scale: ActivationFunction, loss: LossFunction):
         """
         Constructor
 
         :param layers: Define number of parameters each layer should have
         """
+        self.activation = activation
+        self.scale = scale
+        self.loss = loss
         self.layers = layers
         self.parameters = dict()
         self.biases = dict()
@@ -50,7 +55,7 @@ class NeuralNetwork:
 
         return logits, activations
 
-    def backward(self, logits, activations, x, y, activation: ActivationFunction, scale: ActivationFunction, loss: LossFunction, learning_rate=0.001):
+    def backward(self, logits, activations, x, y, activation: ActivationFunction, loss: LossFunction, learning_rate=0.001):
         """
         Backward propagation and parameters fitting
 
@@ -68,10 +73,15 @@ class NeuralNetwork:
         logit_grads = dict()
         linear = Linear()
 
-        logit_grads[f"dZ{self.hiddens}"] = (activations[f"A{self.hiddens}"] - y) / y.shape[1]
+        # gradients of the last output
+        logit_grads[f"dZ{self.hiddens}"] = loss.derivate(activations[f"A{self.hiddens}"], y)
+
         for i in range(1, self.hiddens):
+            # gradient of the hidden layers' activations
             activation_grads[f"dA{self.hiddens - i}"] = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T, logit_grads[f"dZ{self.hiddens - i + 1}"])
-            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * activation.derivate(logits[f"Z{self.hiddens - i}"], True)
+
+            # gradient of the hidden layer's output
+            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * activation.derivate(logits[f"Z{self.hiddens - i}"])
 
         parameter_grads = dict()
         biases_grads = dict()
@@ -87,17 +97,16 @@ class NeuralNetwork:
 
         return loss.compute(y, activations[f"A{self.hiddens}"])
 
-    def train(self, x, y, hidden_activation_function: ActivationFunction, last_activation_function: ActivationFunction,
-              loss_function: LossFunction):
+    def train(self, x, y):
         """
         Forward and backward propagation in one round
 
-        :param last_activation_function:
-        :param hidden_activation_function:
-        :param loss_function:
+        :param scale:
+        :param activation:
+        :param loss:
         :param x: training data
         :param y: labels
         :return: cost of the epoch
         """
-        logits, activations = self.forward(x, hidden_activation_function, last_activation_function)
-        return self.backward(logits, activations, x, y, hidden_activation_function, last_activation_function, loss_function)
+        logits, activations = self.forward(x, self.activation, self.scale)
+        return self.backward(logits, activations, x, y, self.activation, self.loss)
