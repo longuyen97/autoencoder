@@ -96,6 +96,11 @@ class NeuralNetwork:
 
         return self.loss.compute(y, activations[f"A{self.hiddens}"])
 
+    def predict(self, x):
+        _, activations = self.forward(x)
+        return activations[f"A{self.hiddens}"]
+
+
     def train(self, x, y):
         """
         Forward and backward propagation in one round

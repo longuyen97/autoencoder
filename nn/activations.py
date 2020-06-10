@@ -32,25 +32,15 @@ class CategoricalCrossEntropy(Loss):
         """
         This derivation already includes the derivation of softmax
         """
-        ret = (y_true - y_pred) / y_true.shape[1]
-        return ret
+        return (y_true - y_pred) / y_true.shape[1]
 
 
 class BinaryCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
-        loss = - np.sum((y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred)), axis=0, keepdims=True)
-        cost = np.sum(loss, axis=1) / y_true.shape[1]
-        return cost
+        return -(1.0/y_true.shape[1]) * (np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1-y_pred), (1-y_true).T))
 
     def derivate(self, y_true, y_pred):
-        y_pred = y_pred.flatten()
-        y_true = y_true.flatten()
-        ret = y_pred.copy()
-        ret[y_true == 1] = -np.log(y_pred + 0.000001)[y_true == 1]
-        ret[y_true == 0] = -np.log((1 - y_pred) + 0.000001)[y_true == 0]
-        ret = ret / ret.shape[0]
-        ret = ret.reshape((1, ret.shape[0]))
-        return -ret
+        return (y_true - y_pred) / y_true.shape[1]
 
 
 class Relu(Activation):
