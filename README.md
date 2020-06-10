@@ -3,6 +3,9 @@
 This project is my Neural Network playground with Numpy.
 
 # Neural Networks
+- Multi class classification
+- Binary classification
+- Real valued regression
 - Autoencoder
 - Stacked (Deep) Autoencoder
 - Error Backpropagation Multi-Layer Perceptron
