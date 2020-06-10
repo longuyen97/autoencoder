@@ -22,7 +22,7 @@ class Loss(abc.ABC):
         pass
 
 
-class CatCrossEntropy(Loss):
+class CategoricalCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
         loss = - np.sum((y_true * np.log(y_pred)), axis=0, keepdims=True)
         cost = np.sum(loss, axis=1) / y_true.shape[1]
