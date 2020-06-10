@@ -57,7 +57,6 @@ class Relu(ActivationFunction):
 
 
 class Softmax(ActivationFunction):
-
     def activate(self, x, y=None):
         e = np.exp(x)
         return e / np.sum(e, axis=0, keepdims=True)

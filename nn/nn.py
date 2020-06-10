@@ -20,7 +20,7 @@ class NeuralNetwork:
             self.parameters[f"W{i}"] = np.random.randn(layers[i], layers[i - 1]) * (np.sqrt(2 / layers[i - 1]))
             self.biases[f"b{i}"] = np.zeros((layers[i], 1))
 
-    def forward(self, x, hidden_activation_function=Relu, last_activation_function=Softmax) -> typing.Tuple[
+    def forward(self, x, hidden_activation_function: ActivationFunction, last_activation_function: ActivationFunction) -> typing.Tuple[
         typing.Dict, typing.Dict]:
         """
         Forward propagation
@@ -50,8 +50,8 @@ class NeuralNetwork:
 
         return logits, activations
 
-    def backward(self, logits, activations, x, y, hidden_activation_function=Relu, last_activation_function=Softmax,
-                 loss_function=CatCrossEntropy, learning_rate=0.001):
+    def backward(self, logits, activations, x, y, hidden_activation_function: ActivationFunction, last_activation_function: ActivationFunction,
+                 loss_function: LossFunction, learning_rate=0.001):
         """
         Backward propagation and parameters fitting
 
@@ -87,13 +87,17 @@ class NeuralNetwork:
 
         return loss_function.compute(y, activations[f"A{self.hiddens}"])
 
-    def train(self, x, y):
+    def train(self, x, y, hidden_activation_function: ActivationFunction, last_activation_function: ActivationFunction,
+              loss_function: LossFunction):
         """
         Forward and backward propagation in one round
 
+        :param last_activation_function:
+        :param hidden_activation_function:
+        :param loss_function:
         :param x: training data
         :param y: labels
         :return: cost of the epoch
         """
-        logits, activations = self.forward(x)
-        return self.backward(logits, activations, x, y)
+        logits, activations = self.forward(x, hidden_activation_function, last_activation_function)
+        return self.backward(logits, activations, x, y, hidden_activation_function, last_activation_function, loss_function)
