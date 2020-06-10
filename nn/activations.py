@@ -32,7 +32,8 @@ class CategoricalCrossEntropy(Loss):
         """
         This derivation already includes the derivation of softmax
         """
-        return (y_true - y_pred) / y_true.shape[1]
+        ret = (y_true - y_pred) / y_true.shape[1]
+        return ret
 
 
 class BinaryCrossEntropy(Loss):
@@ -42,7 +43,14 @@ class BinaryCrossEntropy(Loss):
         return cost
 
     def derivate(self, y_true, y_pred):
-        return -(y_true / y_pred) + ((1 - y_true) / (1 - y_pred))
+        y_pred = y_pred.flatten()
+        y_true = y_true.flatten()
+        ret = y_pred.copy()
+        ret[y_true == 1] = -np.log(y_pred + 0.000001)[y_true == 1]
+        ret[y_true == 0] = -np.log((1 - y_pred) + 0.000001)[y_true == 0]
+        ret = ret / ret.shape[0]
+        ret = ret.reshape((1, ret.shape[0]))
+        return -ret
 
 
 class Relu(Activation):
@@ -68,7 +76,8 @@ class Softmax(Activation):
 
 class Sigmoid(Activation):
     def activate(self, x, y=None):
-        return 1 / (1 + np.exp(-x))
+        ret = 1 / (1 + np.exp(-x))
+        return ret
 
     def derivate(self, x, y=None):
         e = self.activate(x, y)
