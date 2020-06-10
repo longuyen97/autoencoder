@@ -14,7 +14,7 @@ This project is my Neural Network playground with Numpy.
 from nn.data import generate_categorical_data, generate_binary_data, generate_data
 from nn.activations import Relu, Softmax, CategoricalCrossEntropy, BinaryCrossEntropy, Sigmoid
 
-net = NeuralNetwork([X.shape[0], 256, Y.shape[0]], Relu(), Softmax(), CategoricalCrossEntropy())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 128 Y.shape[0]], Relu(), Softmax(), CategoricalCrossEntropy())
 X, Y = generate_categorical_data()
 loss = net.train(X, Y)
 ```
