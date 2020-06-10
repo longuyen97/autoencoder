@@ -64,6 +64,5 @@ class TestNN(unittest.TestCase):
             print(f"Epoch {i} Loss {loss.item()} Accuracy {acc}")
 
 
-
 if __name__ == '__main__':
     unittest.main()
