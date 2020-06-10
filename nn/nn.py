@@ -30,8 +30,6 @@ class NeuralNetwork:
         """
         Forward propagation
 
-        :param activation:  Activation functions for the hidden layers
-        :param scale:  Activation functions for the last output layer
         :param x: training data
         :return: return logits and activations of every layers in processing order
         """
@@ -44,11 +42,14 @@ class NeuralNetwork:
 
         # Logits and activations of the further hidden layers
         for i in range(2, self.hiddens):
-            logits[f"Z{i}"] = self.linear.activate(self.parameters[f"W{i}"],  activations[f"A{i - 1}"], self.biases[f"b{i}"])
+            logits[f"Z{i}"] = self.linear.activate(self.parameters[f"W{i}"], activations[f"A{i - 1}"],
+                                                   self.biases[f"b{i}"])
             activations[f"A{i}"] = self.activation.activate(logits[f"Z{i}"])
 
         # Logit of the last layer aka. prediction
-        logits[f"Z{self.hiddens}"] = self.linear.activate(self.parameters[f"W{self.hiddens}"], activations[f"A{self.hiddens - 1}"], self.biases[f"b{self.hiddens}"])
+        logits[f"Z{self.hiddens}"] = self.linear.activate(self.parameters[f"W{self.hiddens}"],
+                                                          activations[f"A{self.hiddens - 1}"],
+                                                          self.biases[f"b{self.hiddens}"])
         # Scaling prediction
         activations[f"A{self.hiddens}"] = self.scale.activate(logits[f"Z{self.hiddens}"])
 
@@ -58,9 +59,6 @@ class NeuralNetwork:
         """
         Backward propagation and parameters fitting
 
-        :param activation:
-        :param scale:
-        :param loss:
         :param logits: logits of every layer from the forward propagation
         :param activations: activations of every layer from the forward propagation
         :param x: training data
@@ -77,10 +75,12 @@ class NeuralNetwork:
 
         for i in range(1, self.hiddens):
             # gradient of the hidden layers' activations
-            activation_grads[f"dA{self.hiddens - i}"] = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T, logit_grads[f"dZ{self.hiddens - i + 1}"])
+            activation_grads[f"dA{self.hiddens - i}"] = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T,
+                                                               logit_grads[f"dZ{self.hiddens - i + 1}"])
 
             # gradient of the hidden layer's output
-            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * self.activation.derivate(logits[f"Z{self.hiddens - i}"])
+            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * self.activation.derivate(
+                logits[f"Z{self.hiddens - i}"])
 
         parameter_grads = dict()
         biases_grads = dict()
@@ -97,17 +97,19 @@ class NeuralNetwork:
         return self.loss.compute(y, activations[f"A{self.hiddens}"])
 
     def predict(self, x):
+        """
+        Prediction
+
+        :param x: unknown data
+        :return: prediction. Unscaled
+        """
         _, activations = self.forward(x)
         return activations[f"A{self.hiddens}"]
-
 
     def train(self, x, y):
         """
         Forward and backward propagation in one round
 
-        :param scale:
-        :param activation:
-        :param loss:
         :param x: training data
         :param y: labels
         :return: cost of the epoch
