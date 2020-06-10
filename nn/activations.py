@@ -73,12 +73,16 @@ class Sigmoid(ActivationFunction):
         pass
 
 
-class Linear(ActivationFunction):
-    def derivate(self, x, y=None):
+class Linear:
+    def activate(self, weights, x, biases):
+        return np.dot(weights, x) + biases
+
+    def derivate_weights(self, weights, x, biases):
         pass
 
-    def activate(self, x, y=None):
-        return x
+    def derivate_biases(self, weights, x, biases):
+        pass
+
 
 
 def cat_cross_entropy(y_true, y_pred):

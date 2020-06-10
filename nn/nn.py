@@ -1,6 +1,6 @@
 import numpy as np
-from nn.activations import softmax, relu, cat_cross_entropy, ActivationFunction, Relu, LossFunction, CatCrossEntropy, \
-    Softmax
+from nn.activations import softmax, relu, cat_cross_entropy, ActivationFunction, Relu, LossFunction, CatCrossEntropy
+from nn.activations import Softmax, Linear
 import typing
 
 
@@ -32,19 +32,19 @@ class NeuralNetwork:
         """
         logits = dict()
         activations = dict()
+        linear = Linear()
 
         # Logits and activations of the first hidden layer
-        logits["Z1"] = np.dot(self.parameters["W1"], x) + self.biases["b1"]
+        logits["Z1"] = linear.activate(self.parameters["W1"], x, self.biases["b1"])
         activations["A1"] = hidden_activation_function.activate(logits["Z1"])
 
         # Logits and activations of the further hidden layers
         for i in range(2, self.hiddens):
-            logits[f"Z{i}"] = np.dot(self.parameters[f"W{i}"], activations[f"A{i - 1}"]) + self.biases[f"b{i}"]
+            logits[f"Z{i}"] = linear.activate(self.parameters[f"W{i}"],  activations[f"A{i - 1}"], self.biases[f"b{i}"])
             activations[f"A{i}"] = hidden_activation_function.activate(logits[f"Z{i}"])
 
         # Logit of the last layer aka. prediction
-        logits[f"Z{self.hiddens}"] = np.dot(self.parameters[f"W{self.hiddens}"], activations[f"A{self.hiddens - 1}"]) + \
-                                     self.biases[f"b{self.hiddens}"]
+        logits[f"Z{self.hiddens}"] = linear.activate(self.parameters[f"W{self.hiddens}"], activations[f"A{self.hiddens - 1}"], self.biases[f"b{self.hiddens}"])
         # Scaling prediction
         activations[f"A{self.hiddens}"] = last_activation_function.activate(logits[f"Z{self.hiddens}"])
 
@@ -71,7 +71,7 @@ class NeuralNetwork:
         logit_grads[f"dZ{self.hiddens}"] = (activations[f"A{self.hiddens}"] - y) / y.shape[1]
         for i in range(1, self.hiddens):
             activation_grads[f"dA{self.hiddens - i}"] = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T, logit_grads[f"dZ{self.hiddens - i + 1}"])
-            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[ f"dA{self.hiddens - i}"] * hidden_activation_function.derivate(logits[f"Z{self.hiddens - i}"], True)
+            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * hidden_activation_function.derivate(logits[f"Z{self.hiddens - i}"], True)
 
         parameter_grads = dict()
         biases_grads = dict()
