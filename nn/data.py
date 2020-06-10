@@ -2,6 +2,7 @@ from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 import numpy as np
 
+
 def generate_categorical_data():
     (X, Y), (_, _) = mnist.load_data()
     Y = Y.reshape(Y.shape[0], 1)

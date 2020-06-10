@@ -37,10 +37,36 @@ class CategoricalCrossEntropy(Loss):
 
 class BinaryCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
-        return -(1.0/y_true.shape[1]) * (np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1-y_pred), (1-y_true).T))
+        return -(1.0 / y_true.shape[1]) * (
+                np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
 
     def derivate(self, y_true, y_pred):
         return (y_true - y_pred) / y_true.shape[1]
+
+
+class MeanSquaredError(Loss):
+
+    def compute(self, y_true, y_pred):
+        pass
+
+    def derivate(self, y_true, y_pred):
+        pass
+
+
+class MeanAbsoluteError(Loss):
+    def compute(self, y_true, y_pred):
+        pass
+
+    def derivate(self, y_true, y_pred):
+        pass
+
+
+class LinearActivation(Activation):
+    def activate(self, x, y=None):
+        pass
+
+    def derivate(self, x, y=None):
+        pass
 
 
 class Relu(Activation):
@@ -59,7 +85,7 @@ class Softmax(Activation):
         return e / np.sum(e, axis=0, keepdims=True)
 
     def derivate(self, x, y=None):
-        SM = y.reshape((-1,1))
+        SM = y.reshape((-1, 1))
         jac = np.diagflat(y) - np.dot(SM, SM.T)
         return jac
 
