@@ -3,7 +3,7 @@ import numpy as np
 from nn.activations import Relu, Softmax, CategoricalCrossEntropy, BinaryCrossEntropy, Sigmoid
 from nn.nn import NeuralNetwork
 from sklearn.metrics import accuracy_score
-from nn.data import generate_categorical_data, generate_binary_data
+from nn.data import generate_categorical_data, generate_binary_data, generate_data
 
 
 class TestNN(unittest.TestCase):

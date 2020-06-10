@@ -3,8 +3,12 @@ from tensorflow.keras.utils import to_categorical
 import numpy as np
 
 
+def generate_data():
+    return mnist.load_data()
+
+
 def generate_categorical_data():
-    (X, Y), (_, _) = mnist.load_data()
+    (X, Y), (_, _) = generate_data()
     Y = Y.reshape(Y.shape[0], 1)
     Y = to_categorical(Y, num_classes=10).T
     X = X.reshape(X.shape[0], -1).T
@@ -13,7 +17,7 @@ def generate_categorical_data():
 
 
 def generate_binary_data():
-    (X, Y), (_, _) = mnist.load_data()
+    (X, Y), (_, _) = generate_data()
     Y_ones = Y[Y == 1]
     Y_twos = Y[Y == 2]
     X_ones = X[Y == 1]
