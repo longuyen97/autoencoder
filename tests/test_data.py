@@ -1,6 +1,6 @@
 import unittest
 
-from nn.data import generate_data, generate_binary_data, generate_categorical_data
+from nn.data import generate_data, generate_binary_data, generate_categorical_data, generate_regression_data
 
 
 class TestGeneratingData(unittest.TestCase):
@@ -13,11 +13,24 @@ class TestGeneratingData(unittest.TestCase):
 
     def test_generate_binary_data(self):
         X, Y, x, y = generate_binary_data()
-        print(X.shape, Y.shape, x.shape, y.shape)
+        self.assertTrue(X.shape == (784, 12665))
+        self.assertTrue(Y.shape == (1, 12665))
+        self.assertTrue(x.shape == (10000, 784))
+        self.assertTrue(y.shape == (1, 10000))
 
     def test_generate_categorical_data(self):
         X, Y, x, y = generate_categorical_data()
-        print(X.shape, Y.shape, x.shape, y.shape)
+        self.assertTrue(X.shape == (784, 60000))
+        self.assertTrue(Y.shape == (10, 60000))
+        self.assertTrue(x.shape == (784, 10000))
+        self.assertTrue(y.shape == (10, 10000))
+
+    def test_generate_regression_data(self):
+        X, Y, x, y = generate_regression_data()
+        self.assertTrue(X.shape == (1, 160000))
+        self.assertTrue(Y.shape == (1, 160000))
+        self.assertTrue(x.shape == (1, 40000))
+        self.assertTrue(y.shape == (1, 40000))
 
 
 if __name__ == '__main__':

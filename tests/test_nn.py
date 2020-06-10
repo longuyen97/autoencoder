@@ -38,6 +38,5 @@ class TestNN(unittest.TestCase):
             self.assertTrue(acc > last_acc)
             last_acc = acc
 
-
 if __name__ == '__main__':
     unittest.main()

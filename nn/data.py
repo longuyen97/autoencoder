@@ -1,5 +1,6 @@
 import mnist
 import numpy as np
+import math
 
 
 def generate_data():
@@ -20,6 +21,21 @@ def one_hot_encode(y, classes=10, dtype='float32'):
     output_shape = input_shape + (classes,)
     categorical = np.reshape(categorical, output_shape)
     return categorical
+
+
+def generate_regression_data():
+    x = np.arange(-10000, 10000, 0.1)
+    y = np.sin(2 * math.pi * x)
+    m = int(x.shape[0] * 0.8)
+    indices = np.random.permutation(x.shape[0])
+    training_idx, test_idx = indices[:m], indices[m:]
+    X, x = x[training_idx], x[test_idx]
+    Y, y = y[training_idx], y[test_idx]
+    x = x.reshape((1, x.shape[0]))
+    y = y.reshape((1, y.shape[0]))
+    X = X.reshape((1, X.shape[0]))
+    Y = X.reshape((1, Y.shape[0]))
+    return X, Y, x, y
 
 
 def generate_categorical_data():

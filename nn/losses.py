@@ -35,7 +35,6 @@ class BinaryCrossEntropy(Loss):
 
 
 class MeanSquaredError(Loss):
-
     def compute(self, y_true, y_pred):
         pass
 
