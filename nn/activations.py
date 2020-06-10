@@ -29,7 +29,7 @@ class CatCrossEntropy(Loss):
         return cost
 
     def derivate(self, y_true, y_pred):
-        return (y_pred - y_true) / y_true.shape[1]
+        return (y_true - y_pred) / y_true.shape[1]
 
 
 class BinaryCrossEntropy(Loss):
