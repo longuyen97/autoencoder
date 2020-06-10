@@ -29,15 +29,20 @@ class CatCrossEntropy(Loss):
         return cost
 
     def derivate(self, y_true, y_pred):
+        """
+        This derivation already includes the derivation of softmax
+        """
         return (y_true - y_pred) / y_true.shape[1]
 
 
 class BinaryCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
-        pass
+        loss = - np.sum((y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred)), axis=0, keepdims=True)
+        cost = np.sum(loss, axis=1) / y_true.shape[1]
+        return cost
 
     def derivate(self, y_true, y_pred):
-        pass
+        return -(y_true / y_pred) + ((1 - y_true) / (1 - y_pred))
 
 
 class Relu(Activation):
@@ -56,7 +61,9 @@ class Softmax(Activation):
         return e / np.sum(e, axis=0, keepdims=True)
 
     def derivate(self, x, y=None):
-        pass
+        SM = y.reshape((-1,1))
+        jac = np.diagflat(y) - np.dot(SM, SM.T)
+        return jac
 
 
 class Sigmoid(Activation):
@@ -64,7 +71,8 @@ class Sigmoid(Activation):
         return 1 / (1 + np.exp(-x))
 
     def derivate(self, x, y=None):
-        pass
+        e = self.activate(x, y)
+        return e * (1 - e)
 
 
 class Linear:
