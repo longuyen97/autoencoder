@@ -36,7 +36,7 @@ loss = net.train(X, Y)
 from nn.data import generate_categorical_data, generate_binary_data, generate_data
 from nn.activations import Relu, Softmax, CategoricalCrossEntropy, BinaryCrossEntropy, Sigmoid, MeanSquaredError
 
- net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0], Relu(), Softmax(), MeanSquaredError())
+ net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), Softmax(), MeanSquaredError())
 X, Y = generate_categorical_data()
 loss = net.train(X, X)
 ```
