@@ -1,6 +1,7 @@
 import cv2
 from nn.nn import NeuralNetwork
-from nn.activations import Relu, Softmax, CategoricalCrossEntropy
+from nn.activations import Relu, Softmax
+from nn.losses import CategoricalCrossEntropy
 import numpy as np
 
 cap = cv2.VideoCapture(0)

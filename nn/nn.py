@@ -1,9 +1,7 @@
 import typing
-
 import numpy as np
-
-from nn.activations import Activation, Loss
-from nn.activations import Linear
+from nn.activations import Activation, Linear
+from nn.losses import Loss
 
 
 class NeuralNetwork:
