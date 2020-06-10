@@ -77,11 +77,12 @@ class Linear:
     def activate(self, weights, x, biases):
         return np.dot(weights, x) + biases
 
-    def derivate_weights(self, weights, x, biases):
-        pass
+    def derivate_weights(self, logit_grad, input_data):
+        return np.dot(logit_grad, input_data.T)
 
-    def derivate_biases(self, weights, x, biases):
-        pass
+    def derivate_biases(self, logit_grad):
+        return np.sum(logit_grad, axis=1, keepdims=True)
+
 
 
 
