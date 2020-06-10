@@ -79,6 +79,22 @@ class Relu(Activation):
         return x
 
 
+class LeakyRelu(Activation):
+    def activate(self, x, y=None):
+        pass
+
+    def derivate(self, x, y=None):
+        pass
+
+
+class Tanh(Activation):
+    def activate(self, x, y=None):
+        pass
+
+    def derivate(self, x, y=None):
+        pass
+
+
 class Softmax(Activation):
     def activate(self, x, y=None):
         e = np.exp(x)
