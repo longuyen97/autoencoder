@@ -26,10 +26,10 @@ X_test = X_test_flatten / 255.
 
 class TestNN(unittest.TestCase):
     def test_something(self):
-        net = NeuralNetwork([X_train.shape[0], 256, Y_train.shape[0]])
-        first_loss = net.train(X_train, Y_train, Relu(), Softmax(), CatCrossEntropy())
-        second_loss = net.train(X_train, Y_train, Relu(), Softmax(), CatCrossEntropy())
-        self.assertTrue(first_loss > second_loss)
+        net = NeuralNetwork([X_train.shape[0], 256, Y_train.shape[0]], Relu(), Softmax(), CatCrossEntropy())
+        for i in range(100):
+            loss = net.train(X_train, Y_train)
+            print(loss.item())
 
 
 if __name__ == '__main__':

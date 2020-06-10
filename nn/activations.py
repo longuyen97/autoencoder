@@ -2,10 +2,7 @@ import numpy as np
 import abc
 
 
-class ActivationFunction(abc.ABC):
-    def __init__(self):
-        pass
-
+class Activation(abc.ABC):
     @abc.abstractmethod
     def activate(self, x, y=None):
         pass
@@ -15,10 +12,7 @@ class ActivationFunction(abc.ABC):
         pass
 
 
-class LossFunction(abc.ABC):
-    def __init__(self):
-        pass
-
+class Loss(abc.ABC):
     @abc.abstractmethod
     def compute(self, y_true, y_pred):
         pass
@@ -28,7 +22,7 @@ class LossFunction(abc.ABC):
         pass
 
 
-class CatCrossEntropy(LossFunction):
+class CatCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
         loss = - np.sum((y_true * np.log(y_pred)), axis=0, keepdims=True)
         cost = np.sum(loss, axis=1) / y_true.shape[1]
@@ -38,7 +32,7 @@ class CatCrossEntropy(LossFunction):
         return (y_pred - y_true) / y_true.shape[1]
 
 
-class BinaryCrossEntropy(LossFunction):
+class BinaryCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
         pass
 
@@ -46,7 +40,7 @@ class BinaryCrossEntropy(LossFunction):
         pass
 
 
-class Relu(ActivationFunction):
+class Relu(Activation):
     def activate(self, x, y=None):
         return np.maximum(0, x)
 
@@ -56,7 +50,7 @@ class Relu(ActivationFunction):
         return x
 
 
-class Softmax(ActivationFunction):
+class Softmax(Activation):
     def activate(self, x, y=None):
         e = np.exp(x)
         return e / np.sum(e, axis=0, keepdims=True)
@@ -65,7 +59,7 @@ class Softmax(ActivationFunction):
         pass
 
 
-class Sigmoid(ActivationFunction):
+class Sigmoid(Activation):
     def activate(self, x, y=None):
         return 1 / (1 + np.exp(-x))
 
