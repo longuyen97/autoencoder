@@ -30,6 +30,9 @@ net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, Y.shape[0]], Relu(), Softma
 loss = net.train(X, Y)
 ```
 
+Model's learning curve
+
+![alt-text](images/categorical.png)
 ### Binary classification
 
 ```python

@@ -2,3 +2,4 @@ numpy==1.18.5
 opencv-python==4.2.0.34
 mnist==0.2.2
 matplotlib~=3.2.1
+tqdm~=4.46.1
