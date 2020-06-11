@@ -48,10 +48,10 @@ loss = net.train(X, Y)
 ```python
 from nn.data import generate_categorical_data
 from nn.activations import Relu, Softmax
-from nn.losses import MeanSquaredError
+from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
 
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), Softmax(), MeanSquaredError())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), Softmax(), MeanAbsoluteError())
 loss = net.train(X, X)
 ```
