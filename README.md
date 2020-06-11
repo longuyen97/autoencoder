@@ -2,6 +2,9 @@
 
 This project is my Neural Network playground with Numpy.
 
+
+![alt-text](images/autoencoder-result.png)
+
 ### Requirements
 - numpy==1.18.5
 - opencv-python==4.2.0.34
