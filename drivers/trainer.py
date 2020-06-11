@@ -73,5 +73,33 @@ class BinaryTrainer(Trainer):
             data["val_loss"].append(val_loss.item())
             data["val_acc"].append(val_acc.item())
 
-            progress.set_description(f"Epoch {i} loss {loss.item()} acc {acc.item()} val_loss {val_loss.item()} val_acc {val_acc.item()}")
+            progress.set_description(
+                f"Epoch {i} loss {loss.item()} acc {acc.item()} val_loss {val_loss.item()} val_acc {val_acc.item()}")
         return data
+
+
+class AutoencoderTrainer(Trainer):
+    def train(self, X, Y, x, y, epochs, learning_rate):
+        self.epochs = epochs
+        data = dict()
+        data["loss"] = []
+        data["val_loss"] = []
+        data["acc"] = []
+        data["val_acc"] = []
+        progress = tqdm(range(epochs))
+        for i in progress:
+            loss = self.net.train(X, X, learning_rate=learning_rate)
+            data["loss"].append(np.mean(loss))
+            val_prediction = self.net.predict(x)
+            val_loss = self.loss_function.compute(x, val_prediction)
+            data["val_loss"].append(np.mean(val_loss))
+            progress.set_description(f"Epoch {i} loss {np.mean(loss)} val_loss {np.mean(val_loss)} ")
+        return data
+
+    def plot(self, data):
+        x = [i for i in range(self.epochs)]
+        plt.figure(figsize=(10, 10))
+        plt.plot(x, data["loss"], label="loss")
+        plt.plot(x, data["val_loss"], label="val_loss")
+        plt.legend()
+        plt.show()

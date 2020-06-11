@@ -53,11 +53,11 @@ Model's learning curve
 
 ```python
 from nn.data import generate_categorical_data
-from nn.activations import Relu, Softmax
+from nn.activations import Relu, LinearActivation
 from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
 
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), Softmax(), MeanAbsoluteError())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), MeanAbsoluteError())
 loss = net.train(X, X)
 ```
