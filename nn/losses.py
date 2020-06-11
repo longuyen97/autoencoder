@@ -42,7 +42,7 @@ class MeanSquaredError(Loss):
         pass
 
 
-class MeanAbsoluteError(Loss):
+class MeanAbsoluteError(Loss):  
     def compute(self, y_true, y_pred):
         pass
 
