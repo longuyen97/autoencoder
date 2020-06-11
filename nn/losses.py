@@ -31,7 +31,8 @@ class BinaryCrossEntropy(Loss):
         return -(1.0 / y_true.shape[1]) * (np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
 
     def derivate(self, y_true, y_pred):
-        return (y_true - y_pred) / y_true.shape[1]
+        ret = (y_true - y_pred) / y_true.shape[1]
+        return ret
 
 
 class MeanSquaredError(Loss):

@@ -46,6 +46,9 @@ net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, 1], Relu(), Sigmoid(), Bina
 loss = net.train(X, Y)
 ```
 
+Model's learning curve
+
+![alt-text](images/binary.png)
 ### Autoencoder
 
 ```python

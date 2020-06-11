@@ -57,14 +57,22 @@ def generate_binary_data():
     Y_zeros = Y[Y == 0]
     X_ones = X[Y == 1]
     X_zeros = X[Y == 0]
+    y_ones = y[y == 1]
+    y_zeros = y[y == 0]
+    x_ones = x[y == 1]
+    x_zeros = x[y == 0]
     X = np.concatenate([X_ones, X_zeros])
     Y = np.concatenate([Y_ones, Y_zeros])
+    x = np.concatenate([x_ones, x_zeros])
+    y = np.concatenate([y_ones, y_zeros])
     Y[Y == 1] = 1
     Y[Y != 1] = 0
+    y[y == 1] = 1
+    y[y != 1] = 0
     Y = Y.reshape(Y.shape[0], 1).T
     y = y.reshape(y.shape[0], 1).T
     X = X.reshape(X.shape[0], -1).T
-    x = x.reshape(X.shape[0], -1).T
+    x = x.reshape(x.shape[0], -1).T
     X = X / 255.
     x = x / 255.
     return X, Y, x, y

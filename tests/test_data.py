@@ -15,8 +15,8 @@ class TestGeneratingData(unittest.TestCase):
         X, Y, x, y = generate_binary_data()
         self.assertTrue(X.shape == (784, 12665))
         self.assertTrue(Y.shape == (1, 12665))
-        self.assertTrue(x.shape == (10000, 784))
-        self.assertTrue(y.shape == (1, 10000))
+        self.assertTrue(x.shape == (784, 2115))
+        self.assertTrue(y.shape == (1, 2115))
 
     def test_generate_categorical_data(self):
         X, Y, x, y = generate_categorical_data()
