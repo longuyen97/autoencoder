@@ -22,29 +22,33 @@ class CategoricalCrossEntropy(Loss):
         """
         This derivation already includes the derivation of softmax
         """
-        return (y_true - y_pred) / y_true.shape[1]
+        ret = (y_true - y_pred) / y_true.shape[1]
+        return ret
 
 
 class BinaryCrossEntropy(Loss):
     def compute(self, y_true, y_pred):
-        return -(1.0 / y_true.shape[1]) * (
-                np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
+        return -(1.0 / y_true.shape[1]) * (np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
 
     def derivate(self, y_true, y_pred):
         return (y_true - y_pred) / y_true.shape[1]
 
 
 class MeanSquaredError(Loss):
-    def compute(self, y_true, y_pred):
-        pass
+    def compute(self, y_true, y_pred, axis=1):
+        diff = y_pred - y_true
+        squared = diff ** 2
+        mean_squared = np.sum(squared) / y_true.shape[1]
+        return mean_squared
 
     def derivate(self, y_true, y_pred):
-        pass
+        ret = -(2*(y_true - y_pred)) / y_true.shape[1]
+        return ret
 
 
-class MeanAbsoluteError(Loss):  
+class MeanAbsoluteError(Loss):
     def compute(self, y_true, y_pred):
-        pass
+        return np.mean(np.absolute(y_pred - y_true), axis=1)
 
     def derivate(self, y_true, y_pred):
-        pass
+        return (y_true - y_pred) / (y_true.shape[1] * np.absolute(y_true - y_pred))

@@ -27,10 +27,10 @@ class TestGeneratingData(unittest.TestCase):
 
     def test_generate_regression_data(self):
         X, Y, x, y = generate_regression_data()
-        self.assertTrue(X.shape == (1, 160000))
-        self.assertTrue(Y.shape == (1, 160000))
-        self.assertTrue(x.shape == (1, 40000))
-        self.assertTrue(y.shape == (1, 40000))
+        self.assertTrue(X.shape == (1, 1600))
+        self.assertTrue(Y.shape == (1, 1600))
+        self.assertTrue(x.shape == (1, 400))
+        self.assertTrue(y.shape == (1, 400))
 
 
 if __name__ == '__main__':

@@ -73,12 +73,13 @@ class NeuralNetwork:
 
         for i in range(1, self.hiddens):
             # gradient of the hidden layers' activations
-            activation_grads[f"dA{self.hiddens - i}"] = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T,
-                                                               logit_grads[f"dZ{self.hiddens - i + 1}"])
+            a_grad = np.dot(self.parameters[f"W{self.hiddens - i + 1}"].T, logit_grads[f"dZ{self.hiddens - i + 1}"])
+            activation_grads[f"dA{self.hiddens - i}"] = a_grad
 
             # gradient of the hidden layer's output
-            logit_grads[f"dZ{self.hiddens - i}"] = activation_grads[f"dA{self.hiddens - i}"] * self.activation.derivate(
+            log_grad = activation_grads[f"dA{self.hiddens - i}"] * self.activation.derivate(
                 logits[f"Z{self.hiddens - i}"])
+            logit_grads[f"dZ{self.hiddens - i}"] = log_grad
 
         parameter_grads = dict()
         biases_grads = dict()
@@ -104,13 +105,14 @@ class NeuralNetwork:
         _, activations = self.forward(x)
         return activations[f"A{self.hiddens}"]
 
-    def train(self, x, y):
+    def train(self, x, y, learning_rate=0.0001):
         """
         Forward and backward propagation in one round
 
+        :param learning_rate:  learning rate for an epoch
         :param x: training data
         :param y: labels
         :return: cost of the epoch
         """
         logits, activations = self.forward(x)
-        return self.backward(logits, activations, x, y)
+        return self.backward(logits, activations, x, y, learning_rate)

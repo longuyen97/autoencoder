@@ -24,7 +24,7 @@ def one_hot_encode(y, classes=10, dtype='float32'):
 
 
 def generate_regression_data():
-    x = np.arange(-10000, 10000, 0.1)
+    x = np.arange(-10, 10, 0.01)
     y = np.sin(2 * math.pi * x)
     m = int(x.shape[0] * 0.8)
     indices = np.random.permutation(x.shape[0])

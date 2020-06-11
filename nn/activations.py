@@ -14,10 +14,10 @@ class Activation(abc.ABC):
 
 class LinearActivation(Activation):
     def activate(self, x, y=None):
-        pass
+        return x
 
     def derivate(self, x, y=None):
-        pass
+        return 1
 
 
 class Relu(Activation):
