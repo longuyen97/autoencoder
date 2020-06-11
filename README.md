@@ -54,10 +54,14 @@ Model's learning curve
 ```python
 from nn.data import generate_categorical_data
 from nn.activations import Relu, LinearActivation
-from nn.losses import MeanAbsoluteError
+from nn.losses import AutoEncoderError
 from nn.nn import NeuralNetwork
 
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), MeanAbsoluteError())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), AutoEncoderError())
 loss = net.train(X, X)
 ```
+
+Model's learning curve
+
+![alt-text](images/autoencoder.png)

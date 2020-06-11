@@ -69,7 +69,7 @@ class NeuralNetwork:
         linear = Linear()
 
         # gradients of the last output
-        logit_grads[f"dZ{self.hiddens}"] = self.loss.derivate(activations[f"A{self.hiddens}"], y)
+        logit_grads[f"dZ{self.hiddens}"] = self.loss.derivative(activations[f"A{self.hiddens}"], y)
 
         for i in range(1, self.hiddens):
             # gradient of the hidden layers' activations

@@ -8,7 +8,7 @@ class Loss(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def derivate(self, y_true, y_pred):
+    def derivative(self, y_true, y_pred):
         pass
 
 
@@ -18,7 +18,7 @@ class CategoricalCrossEntropy(Loss):
         cost = np.sum(loss, axis=1) / y_true.shape[1]
         return cost
 
-    def derivate(self, y_true, y_pred):
+    def derivative(self, y_true, y_pred):
         """
         This derivation already includes the derivation of softmax
         """
@@ -31,7 +31,7 @@ class BinaryCrossEntropy(Loss):
         return -(1.0 / y_true.shape[1]) * (
                 np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
 
-    def derivate(self, y_true, y_pred):
+    def derivative(self, y_true, y_pred):
         ret = (y_true - y_pred) / y_true.shape[1]
         return ret
 
@@ -43,17 +43,38 @@ class MeanSquaredError(Loss):
         mean_squared = np.sum(squared) / y_true.shape[1]
         return mean_squared
 
-    def derivate(self, y_true, y_pred):
+    def derivative(self, y_true, y_pred):
         ret = -(2 * (y_true - y_pred)) / y_true.shape[1]
         return ret
 
 
 class MeanAbsoluteError(Loss):
-    def __init__(self, axis=1):
-        self.axis = axis
-
     def compute(self, y_true, y_pred):
-        return np.mean(np.absolute(y_pred - y_true), axis=self.axis)
+        absolute = np.absolute(y_pred - y_true)
+        return np.mean(absolute, axis=1)
 
-    def derivate(self, y_true, y_pred):
-        return (y_true - y_pred) / (y_true.shape[self.axis] * np.absolute(y_true - y_pred))
+    def derivative(self, y_true, y_pred):
+        return (y_true - y_pred) / (y_true.shape[1] * np.absolute(y_true - y_pred))
+
+
+class AutoEncoderError(Loss):
+    def compute(self, y_true, y_pred):
+        diff = np.subtract(y_pred, y_true)
+        absolute = np.absolute(diff)
+        whole_sum = np.sum(absolute, axis=0)
+        ret = np.mean(whole_sum)
+        return ret
+
+    def derivative(self, y_true, y_pred):
+        import autograd.numpy as np
+        from autograd import grad
+
+        def do(y_true, y_pred):
+            diff = np.subtract(y_pred, y_true)
+            absolute = np.absolute(diff)
+            whole_sum = np.sum(absolute, axis=0)
+            ret = np.mean(whole_sum)
+            return ret
+
+        grad_do = grad(do)
+        return grad_do(y_true, y_pred)
