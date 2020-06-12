@@ -23,7 +23,8 @@ class GradientDescent(Optimizer):
 
 
 class MomentumGradientDescent(Optimizer):
-    def __init__(self, learning_rate, momentum=0.9):
+    def __init__(self, learning_rate, depth, momentum=0.9):
+        super().__init__(depth)
         self.learning_Rate = learning_rate
         self.momentum = momentum
         self.weights_velocity = dict()
