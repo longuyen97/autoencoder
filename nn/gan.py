@@ -1,15 +1,15 @@
 import typing
 import numpy as np
-from nn.activations import Activation, Linear
-from nn.losses import Loss
+from nn.activations import Activation, Linear, Sigmoid, LeakyRelu
+from nn.data import generate_categorical_data
+from nn.losses import CrossEntropy
 
 
 class GanNeuralNetwork:
-    def __init__(self, layers: typing.List, activation: Activation, scale: Activation, loss: Loss):
+    def __init__(self, layers: typing.List, activation: Activation, scale: Activation):
         self.linear = Linear()
         self.activation = activation
         self.scale = scale
-        self.loss = loss
         self.layers = layers
         self.parameters = dict()
         self.biases = dict()
@@ -42,7 +42,7 @@ class GanNeuralNetwork:
 
         return logits, activations
 
-    def backward(self, logits, activations, x, y, learning_rate=0.001):
+    def backward(self, logits, activations, x, loss, learning_rate=0.001):
         """
         Backward propagation and parameters fitting
 
@@ -58,7 +58,7 @@ class GanNeuralNetwork:
         linear = Linear()
 
         # gradients of the last output
-        logit_grads[f"dZ{self.hiddens}"] = self.loss.derivative(activations[f"A{self.hiddens}"], y)
+        logit_grads[f"dZ{self.hiddens}"] = loss
 
         for i in range(1, self.hiddens):
             # gradient of the hidden layers' activations
@@ -82,4 +82,39 @@ class GanNeuralNetwork:
             self.parameters[f"W{i}"] -= (learning_rate * parameter_grads[f"dW{i}"])
             self.biases[f"b{i}"] -= (learning_rate * biases_grads[f"db{i}"])
 
-        return self.loss.compute(y, activations[f"A{self.hiddens}"])
+
+LATENT_SPACE_DIM = 100
+X, Y, x, y = generate_categorical_data()
+dis = GanNeuralNetwork([X.shape[0], 512, 256, 64, 32, 1], LeakyRelu(), Sigmoid())
+gen = GanNeuralNetwork([LATENT_SPACE_DIM, 256, 512, X.shape[0]], LeakyRelu(), Linear())
+cross_entropy = CrossEntropy()
+
+
+def discriminator_loss(real_output, fake_output):
+    real_loss = cross_entropy.derivative(np.ones_like(real_output), real_output)
+    fake_loss = cross_entropy.derivative(np.zeros_like(fake_output), fake_output)
+    return real_loss + fake_loss
+
+
+def generator_loss(fake_output):
+    return cross_entropy.derivative(np.ones_like(fake_output), fake_output)
+
+
+def train(real_images):
+    noise = np.random.normal([real_images.shape[1], LATENT_SPACE_DIM])
+
+    gen_logits, gen_activations = gen.forward(noise)
+
+    dis_real_logits, dis_real_activations = dis.forward(real_images)
+
+    dis_gen_logits, dis_gen_activations = dis.forward(gen_activations[f"A{gen.hiddens}"])
+
+    gen_loss = generator_loss(gen_activations[f"A{gen.hiddens}"])
+
+    dis_loss = discriminator_loss(real_images, gen_activations[f"A{gen.hiddens}"])
+
+    dis.backward(dis_real_logits, dis_real_activations, real_images, dis_loss)
+
+    dis.backward(dis_gen_logits, dis_gen_activations, real_images, dis_loss)
+
+    gen.backward(gen_logits, gen_activations, real_images, gen_loss)
