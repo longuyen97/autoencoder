@@ -12,7 +12,7 @@ from nn.optimizers import GradientDescent
 
 class TestBinary(unittest.TestCase):
     def test_binary(self):
-        optimizer = GradientDescent(learning_rate=0.0001)
+        optimizer = GradientDescent(learning_rate=0.01, depth=3)
         X, Y, x, y = generate_binary_data()
         print(X.shape, Y.shape)
         net = NeuralNetwork([X.shape[0], 256, 1], Relu(), Sigmoid(), CrossEntropy(), optimizer)

@@ -6,7 +6,7 @@ from nn.metrics import Accuracy
 from nn.data import generate_binary_data
 from nn.optimizers import GradientDescent
 
-optimizer = GradientDescent(learning_rate=0.1)
+optimizer = GradientDescent(learning_rate=0.01, depth=5)
 X, Y, x, y = generate_binary_data()
 activation = Relu()
 scale = Sigmoid()

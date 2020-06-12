@@ -7,7 +7,7 @@ from nn.data import generate_binary_data
 import matplotlib.pyplot as plt
 from nn.optimizers import GradientDescent
 
-optimizer = GradientDescent(learning_rate=0.01)
+optimizer = GradientDescent(learning_rate=0.01, depth=8)
 X, Y, x, y = generate_binary_data()
 activation = Relu()
 scale = LinearActivation()

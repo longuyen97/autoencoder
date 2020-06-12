@@ -72,17 +72,18 @@ class GanNeuralNetwork:
                 logits[f"Z{self.hiddens - i}"])
             logit_grads[f"dZ{self.hiddens - i}"] = log_grad
 
+        # Gradients of parameters and biases. Important
         parameter_grads = dict()
         biases_grads = dict()
         parameter_grads["dW1"] = linear.derivate_weights(logit_grads["dZ1"], x)
         biases_grads["db1"] = linear.derivate_biases(logit_grads["dZ1"])
+
         for i in range(2, self.depth):
             parameter_grads[f"dW{i}"] = linear.derivate_weights(logit_grads[f"dZ{i}"], activations[f"A{i - 1}"])
             biases_grads[f"db{i}"] = linear.derivate_biases(logit_grads[f"dZ{i}"])
 
-        for i in range(1, self.depth):
-            self.parameters[f"W{i}"] = self.optimizer.compute(self.parameters[f"W{i}"], parameter_grads[f"dW{i}"])
-            self.biases[f"b{i}"] = self.optimizer.compute(self.biases[f"b{i}"], biases_grads[f"db{i}"])
+        # Adjust weights to gradients
+        self.parameters, self.biases = self.optimizer.compute(self.parameters, self.biases, parameter_grads, biases_grads)
 
 
 LATENT_SPACE_DIM = 100

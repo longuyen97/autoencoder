@@ -45,9 +45,10 @@ from nn.activations import Relu, Sigmoid
 from nn.losses import CrossEntropy
 from nn.optimizers import GradientDescent
 
-optimizer = GradientDescent(0.001)
 X, Y = generate_binary_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, 1], Relu(), Sigmoid(), CrossEntropy(), optimizer)
+layers = [X.shape[0], 512, 256, 256, 128, 1]
+optimizer = GradientDescent(learning_rate=0.01, depth=len(layers))
+net = NeuralNetwork(layers, Relu(), Sigmoid(), CrossEntropy(), optimizer)
 loss = net.train(X, Y)
 ```
 
@@ -63,9 +64,10 @@ from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
 from nn.optimizers import GradientDescent
 
-optimizer = GradientDescent(0.001)
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), MeanAbsoluteError(), optimizer)
+layers = [X.shape[0], 512, 256, 256, 128, 512]
+optimizer = GradientDescent(learning_rate=0.01, depth=len(layers))
+net = NeuralNetwork(layers, Relu(), LinearActivation(), MeanAbsoluteError(), optimizer)
 loss = net.train(X, X)
 ```
 
@@ -80,9 +82,9 @@ from nn.activations import Relu, LinearActivation
 from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
 from nn.optimizers import GradientDescent
-
-optimizer = GradientDescent(0.001)
 X, Y = generate_regression_data()
+layers = [X.shape[0], 32, 1]
+optimizer = GradientDescent(0.001, len(layers))
 net = NeuralNetwork([X.shape[0], 32, 1], Relu(), LinearActivation(), MeanAbsoluteError(), optimizer)
 loss = net.train(X, Y)
 ```

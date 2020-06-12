@@ -12,7 +12,7 @@ from nn.optimizers import GradientDescent
 
 class TestCategorical(unittest.TestCase):
     def test_categorical(self):
-        optimizer = GradientDescent(learning_rate=0.0001)
+        optimizer = GradientDescent(learning_rate=0.01, depth=3)
         metric = Accuracy()
         X, Y, x, y = generate_categorical_data()
         print(X.shape, Y.shape)

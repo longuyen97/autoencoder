@@ -6,7 +6,7 @@ from nn.metrics import Accuracy
 from nn.data import generate_categorical_data
 from nn.optimizers import GradientDescent
 
-optimizer = GradientDescent(learning_rate=0.01)
+optimizer = GradientDescent(learning_rate=0.01, depth=5)
 X, Y, x, y = generate_categorical_data()
 activation = Relu()
 scale = Softmax()

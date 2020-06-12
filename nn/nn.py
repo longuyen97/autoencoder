@@ -84,6 +84,7 @@ class NeuralNetwork:
                 logits[f"Z{self.hiddens - i}"])
             logit_grads[f"dZ{self.hiddens - i}"] = log_grad
 
+        # Calculate gradients of parameters and biases
         parameter_grads = dict()
         biases_grads = dict()
         parameter_grads["dW1"] = linear.derivate_weights(logit_grads["dZ1"], x)
@@ -93,10 +94,9 @@ class NeuralNetwork:
             biases_grads[f"db{i}"] = linear.derivate_biases(logit_grads[f"dZ{i}"])
 
         loss = self.loss.compute(y, activations[f"A{self.hiddens}"])
-        for i in range(1, self.depth):
-            self.parameters[f"W{i}"] = self.optimizer.compute(self.parameters[f"W{i}"], parameter_grads[f"dW{i}"])
-            self.biases[f"b{i}"] = self.optimizer.compute(self.biases[f"b{i}"], biases_grads[f"db{i}"])
 
+        # Adjust parameters and biases to gradients
+        self.parameters, self.biases = self.optimizer.compute(self.parameters, self.biases, parameter_grads, biases_grads)
         return loss
 
     def predict(self, x):
