@@ -2,7 +2,7 @@
 
 This project is my Neural Network playground with Numpy.
 
-Result of the autoencoder (Left: Original, Middel: Latent space, Right: Reconstructed image):
+Result of the autoencoder (Left: Original, Middle: Latent space, Right: Reconstructed image):
 ![alt-text](images/autoencoder-result.png)
 
 ### Requirements
@@ -15,8 +15,9 @@ Result of the autoencoder (Left: Original, Middel: Latent space, Right: Reconstr
 - Real valued regression
 - Auto-Encoder
 - Stacked (Deep) Auto-Encoder
-- Error Backpropagation Multi-Layer Perceptron
+- Error back-propagation multi-layer perceptron
 - Mini batched gradient descent
+- (Momentum driven) gradient descent
 
 ### Categorical classification
 
@@ -25,11 +26,12 @@ from nn.data import generate_categorical_data
 from nn.activations import Relu, Softmax
 from nn.losses import CrossEntropy
 from nn.nn import NeuralNetwork
-from nn.optimizers import GradientDescent
+from nn.optimizers import MomentumGradientDescent
 
-optimizer = GradientDescent(0.001)
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, Y.shape[0]], Relu(), Softmax(), CrossEntropy(), optimizer)
+layers = [X.shape[0], 512, 256, 256, 128, Y.shape[0]]
+optimizer = MomentumGradientDescent(0.001, len(layers), momentum=0.9)
+net = NeuralNetwork(layers, Relu(), Softmax(), CrossEntropy(), optimizer)
 loss = net.train(X, Y)
 ```
 
@@ -43,11 +45,11 @@ from nn.nn import NeuralNetwork
 from nn.data import generate_binary_data
 from nn.activations import Relu, Sigmoid
 from nn.losses import CrossEntropy
-from nn.optimizers import GradientDescent
+from nn.optimizers import MomentumGradientDescent
 
 X, Y = generate_binary_data()
 layers = [X.shape[0], 512, 256, 256, 128, 1]
-optimizer = GradientDescent(learning_rate=0.01, depth=len(layers))
+optimizer = MomentumGradientDescent(0.001, len(layers), momentum=0.9)
 net = NeuralNetwork(layers, Relu(), Sigmoid(), CrossEntropy(), optimizer)
 loss = net.train(X, Y)
 ```
@@ -62,11 +64,11 @@ from nn.data import generate_categorical_data
 from nn.activations import Relu, LinearActivation
 from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
-from nn.optimizers import GradientDescent
+from nn.optimizers import MomentumGradientDescent
 
 X, Y = generate_categorical_data()
 layers = [X.shape[0], 512, 256, 256, 128, 512]
-optimizer = GradientDescent(learning_rate=0.01, depth=len(layers))
+optimizer = MomentumGradientDescent(0.001, len(layers), momentum=0.9)
 net = NeuralNetwork(layers, Relu(), LinearActivation(), MeanAbsoluteError(), optimizer)
 loss = net.train(X, X)
 ```
@@ -81,10 +83,11 @@ from nn.data import generate_regression_data
 from nn.activations import Relu, LinearActivation
 from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
-from nn.optimizers import GradientDescent
+from nn.optimizers import MomentumGradientDescent
+
 X, Y = generate_regression_data()
 layers = [X.shape[0], 32, 1]
-optimizer = GradientDescent(0.001, len(layers))
+optimizer = MomentumGradientDescent(0.001, len(layers), momentum=0.9)
 net = NeuralNetwork([X.shape[0], 32, 1], Relu(), LinearActivation(), MeanAbsoluteError(), optimizer)
 loss = net.train(X, Y)
 ```
