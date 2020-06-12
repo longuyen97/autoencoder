@@ -13,10 +13,9 @@ This project is my Neural Network playground with Numpy.
 - Multi class classification
 - Binary classification
 - Real valued regression
-- Autoencoder
-- Stacked (Deep) Autoencoder
+- Auto-Encoder
+- Stacked (Deep) Auto-Encoder
 - Error Backpropagation Multi-Layer Perceptron
-- Webcam Integration
 
 ### Categorical classification
 
