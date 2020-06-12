@@ -12,7 +12,7 @@ class Trainer:
         self.net = net
         self.epochs = 0
 
-    def train(self, X, Y, x, y, epochs, learning_rate):
+    def train(self, X, Y, x, y, epochs):
         self.epochs = epochs
         data = dict()
         data["loss"] = []
@@ -21,7 +21,7 @@ class Trainer:
         data["val_acc"] = []
         progress = tqdm(range(epochs))
         for i in progress:
-            loss = self.net.train(X, Y, learning_rate=learning_rate)
+            loss = self.net.train(X, Y)
             data["loss"].append(loss.item())
             prediction = self.net.predict(X)
             argmax_prediction = np.argmax(prediction, axis=0)
@@ -51,7 +51,7 @@ class Trainer:
 
 
 class BinaryTrainer(Trainer):
-    def train(self, X, Y, x, y, epochs, learning_rate):
+    def train(self, X, Y, x, y, epochs):
         self.epochs = epochs
         data = dict()
         data["loss"] = []
@@ -60,7 +60,7 @@ class BinaryTrainer(Trainer):
         data["val_acc"] = []
         progress = tqdm(range(epochs))
         for i in progress:
-            loss = self.net.train(X, Y, learning_rate=learning_rate)
+            loss = self.net.train(X, Y)
             data["loss"].append(loss[0][0])
 
             prediction = np.round(self.net.predict(X))
@@ -79,7 +79,7 @@ class BinaryTrainer(Trainer):
 
 
 class AutoencoderTrainer(Trainer):
-    def train(self, X, Y, x, y, epochs, learning_rate):
+    def train(self, X, Y, x, y, epochs):
         self.epochs = epochs
         data = dict()
         data["loss"] = []
@@ -88,7 +88,7 @@ class AutoencoderTrainer(Trainer):
         data["val_acc"] = []
         progress = tqdm(range(epochs))
         for i in progress:
-            loss = self.net.train(X, X, learning_rate=learning_rate)
+            loss = self.net.train(X, X)
             data["loss"].append(np.mean(loss))
             val_prediction = self.net.predict(x)
             val_loss = self.loss_function.compute(x, val_prediction)
@@ -106,7 +106,7 @@ class AutoencoderTrainer(Trainer):
 
 
 class RegressionTrainer(Trainer):
-    def train(self, X, Y, x, y, epochs, learning_rate):
+    def train(self, X, Y, x, y, epochs):
         self.epochs = epochs
         data = dict()
         data["loss"] = []
@@ -115,7 +115,7 @@ class RegressionTrainer(Trainer):
         data["val_acc"] = []
         progress = tqdm(range(epochs))
         for i in progress:
-            loss = self.net.train(X, Y, learning_rate=learning_rate)
+            loss = self.net.train(X, Y)
             data["loss"].append(np.mean(loss))
             val_prediction = self.net.predict(x)
             val_loss = self.loss_function.compute(y, val_prediction)

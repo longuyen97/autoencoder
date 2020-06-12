@@ -5,15 +5,17 @@ from nn.nn import NeuralNetwork
 from nn.metrics import Accuracy
 from nn.data import generate_binary_data
 import matplotlib.pyplot as plt
+from nn.optimizers import GradientDescent
 
+optimizer = GradientDescent(learning_rate=0.01)
 X, Y, x, y = generate_binary_data()
 activation = Relu()
 scale = LinearActivation()
 loss_function = MeanAbsoluteError()
 metrics = Accuracy()
-net = NeuralNetwork([784, 512, 256, 128, 128, 256, 512, 784], activation, scale, loss_function)
+net = NeuralNetwork([784, 512, 256, 128, 128, 256, 512, 784], activation, scale, loss_function, optimizer)
 trainer = AutoencoderTrainer(activation, scale, loss_function, metrics, net)
-history = trainer.train(X, Y, x, y, 20, 0.01)
+history = trainer.train(X, Y, x, y, 20)
 trainer.plot(history)
 
 

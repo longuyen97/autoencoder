@@ -2,10 +2,12 @@ import typing
 import numpy as np
 from nn.activations import Activation, Linear
 from nn.losses import Loss
+import random
+from nn.optimizers import Optimizer
 
 
 class NeuralNetwork:
-    def __init__(self, layers: typing.List, activation: Activation, scale: Activation, loss: Loss):
+    def __init__(self, layers: typing.List, activation: Activation, scale: Activation, loss: Loss, optimizer: Optimizer):
         """
         Constructor
 
@@ -20,6 +22,7 @@ class NeuralNetwork:
         self.biases = dict()
         self.depth = len(layers)
         self.hiddens = len(layers) - 1
+        self.optimizer = optimizer
         for i in range(1, self.depth):
             self.parameters[f"W{i}"] = np.random.randn(layers[i], layers[i - 1]) * (np.sqrt(2 / layers[i - 1]))
             self.biases[f"b{i}"] = np.zeros((layers[i], 1))
@@ -53,7 +56,7 @@ class NeuralNetwork:
 
         return logits, activations
 
-    def backward(self, logits, activations, x, y, learning_rate=0.001):
+    def backward(self, logits, activations, x, y):
         """
         Backward propagation and parameters fitting
 
@@ -89,11 +92,12 @@ class NeuralNetwork:
             parameter_grads[f"dW{i}"] = linear.derivate_weights(logit_grads[f"dZ{i}"], activations[f"A{i - 1}"])
             biases_grads[f"db{i}"] = linear.derivate_biases(logit_grads[f"dZ{i}"])
 
+        loss = self.loss.compute(y, activations[f"A{self.hiddens}"])
         for i in range(1, self.depth):
-            self.parameters[f"W{i}"] -= (learning_rate * parameter_grads[f"dW{i}"])
-            self.biases[f"b{i}"] -= (learning_rate * biases_grads[f"db{i}"])
+            self.parameters[f"W{i}"] = self.optimizer.compute(self.parameters[f"W{i}"], parameter_grads[f"dW{i}"])
+            self.biases[f"b{i}"] = self.optimizer.compute(self.biases[f"b{i}"], biases_grads[f"db{i}"])
 
-        return self.loss.compute(y, activations[f"A{self.hiddens}"])
+        return loss
 
     def predict(self, x):
         """
@@ -105,7 +109,7 @@ class NeuralNetwork:
         _, activations = self.forward(x)
         return activations[f"A{self.hiddens}"]
 
-    def train(self, x, y, learning_rate=0.0001):
+    def train(self, x, y):
         """
         Forward and backward propagation in one round
 
@@ -115,9 +119,9 @@ class NeuralNetwork:
         :return: cost of the epoch
         """
         logits, activations = self.forward(x)
-        return self.backward(logits, activations, x, y, learning_rate)
+        return self.backward(logits, activations, x, y)
 
-    def minibatch(self, x, y, learning_rate=0.0001, batch_size=16):
+    def mini_batch(self, x, y, batch_size=16):
         """
         Minibatch training
         :param x: training data
@@ -131,6 +135,13 @@ class NeuralNetwork:
             _x = x[:, i * batch_size:i * batch_size + batch_size]
             _y = y[:, i * batch_size:i * batch_size + batch_size]
             logits, activations = self.forward(x)
-            loss = self.backward(logits, activations, x, y, learning_rate)
+            loss = self.backward(logits, activations, x, y)
             losses.append(loss)
         return losses
+
+    def stochastic_batch(self, x, y):
+        index = random.randint(0, x.shape[1])
+        _x = x[:, index].reshape(x.shape[0], 1)
+        _y = y[:, index].reshape(y.shape[0], 1)
+        logits, activations = self.forward(_x)
+        return self.backward(logits, activations, _x, _y)

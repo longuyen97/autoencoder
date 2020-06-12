@@ -1,12 +1,14 @@
 import typing
 import numpy as np
-from nn.activations import Activation, Linear, Sigmoid, LeakyRelu
+from nn.activations import Activation, LinearActivation, Sigmoid, LeakyRelu, Linear
 from nn.data import generate_categorical_data
 from nn.losses import CrossEntropy
+from nn.optimizers import Optimizer, GradientDescent
 
 
 class GanNeuralNetwork:
-    def __init__(self, layers: typing.List, activation: Activation, scale: Activation):
+    def __init__(self, layers: typing.List, activation: Activation, scale: Activation, optimizer: Optimizer):
+        self.optimizer = optimizer
         self.linear = Linear()
         self.activation = activation
         self.scale = scale
@@ -42,7 +44,7 @@ class GanNeuralNetwork:
 
         return logits, activations
 
-    def backward(self, logits, activations, x, loss, learning_rate=0.001):
+    def backward(self, logits, activations, x, loss):
         """
         Backward propagation and parameters fitting
 
@@ -79,14 +81,15 @@ class GanNeuralNetwork:
             biases_grads[f"db{i}"] = linear.derivate_biases(logit_grads[f"dZ{i}"])
 
         for i in range(1, self.depth):
-            self.parameters[f"W{i}"] -= (learning_rate * parameter_grads[f"dW{i}"])
-            self.biases[f"b{i}"] -= (learning_rate * biases_grads[f"db{i}"])
+            self.parameters[f"W{i}"] = self.optimizer.compute(self.parameters[f"W{i}"], parameter_grads[f"dW{i}"])
+            self.biases[f"b{i}"] = self.optimizer.compute(self.biases[f"b{i}"], biases_grads[f"db{i}"])
 
 
 LATENT_SPACE_DIM = 100
 X, Y, x, y = generate_categorical_data()
-dis = GanNeuralNetwork([X.shape[0], 512, 256, 64, 32, 1], LeakyRelu(), Sigmoid())
-gen = GanNeuralNetwork([LATENT_SPACE_DIM, 256, 512, X.shape[0]], LeakyRelu(), Linear())
+optimizer = GradientDescent(learning_rate=0.001)
+dis = GanNeuralNetwork([X.shape[0], 512, 256, 64, 32, 1], LeakyRelu(), Sigmoid(), optimizer)
+gen = GanNeuralNetwork([LATENT_SPACE_DIM, 256, 512, X.shape[0]], LeakyRelu(), LinearActivation(), optimizer)
 cross_entropy = CrossEntropy()
 
 
