@@ -116,3 +116,21 @@ class NeuralNetwork:
         """
         logits, activations = self.forward(x)
         return self.backward(logits, activations, x, y, learning_rate)
+
+    def minibatch(self, x, y, learning_rate=0.0001, batch_size=16):
+        """
+        Minibatch training
+        :param x: training data
+        :param y: labels
+        :param learning_rate: learning rate at each batch
+        :param batch_size: batchs size
+        :return: list of every loss at each batch
+        """
+        losses = []
+        for i in range(0, x.shape[1], batch_size):
+            _x = x[:, i * batch_size:i * batch_size + batch_size]
+            _y = y[:, i * batch_size:i * batch_size + batch_size]
+            logits, activations = self.forward(x)
+            loss = self.backward(logits, activations, x, y, learning_rate)
+            losses.append(loss)
+        return losses
