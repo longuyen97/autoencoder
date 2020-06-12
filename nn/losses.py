@@ -1,8 +1,13 @@
 import numpy as np
 import abc
+from autograd import grad
+import autograd.numpy as dnp
 
 
 class Loss(abc.ABC):
+    """
+    Abstract class as template for every loss function
+    """
     @abc.abstractmethod
     def compute(self, y_true, y_pred):
         pass
@@ -12,7 +17,10 @@ class Loss(abc.ABC):
         pass
 
 
-class CategoricalCrossEntropy(Loss):
+class CrossEntropy(Loss):
+    """
+    Categorical cross entropy with multiple classes
+    """
     def compute(self, y_true, y_pred):
         loss = - np.sum((y_true * np.log(y_pred)), axis=0, keepdims=True)
         cost = np.sum(loss, axis=1) / y_true.shape[1]
@@ -26,38 +34,29 @@ class CategoricalCrossEntropy(Loss):
         return ret
 
 
-class BinaryCrossEntropy(Loss):
-    def compute(self, y_true, y_pred):
-        return -(1.0 / y_true.shape[1]) * (
-                np.dot(np.log(y_pred), y_true.T) + np.dot(np.log(1 - y_pred), (1 - y_true).T))
-
-    def derivative(self, y_true, y_pred):
-        ret = (y_true - y_pred) / y_true.shape[1]
-        return ret
-
-
 class MeanSquaredError(Loss):
+    """
+    Mean squared error for regression problem
+    """
     def compute(self, y_true, y_pred, axis=1):
         diff = y_pred - y_true
         squared = diff ** 2
-        mean_squared = np.sum(squared) / y_true.shape[1]
-        return mean_squared
+        whole_sum = np.sum(squared, axis=0)
+        return np.mean(whole_sum)
 
     def derivative(self, y_true, y_pred):
-        ret = -(2 * (y_true - y_pred)) / y_true.shape[1]
-        return ret
+        def do(_y_true, _y_pred):
+            diff = _y_pred - _y_true
+            squared = diff ** 2
+            whole_sum = dnp.sum(squared, axis=0)
+            return dnp.mean(whole_sum)
+        return -grad(do, 1)(y_true, y_pred)
 
 
 class MeanAbsoluteError(Loss):
-    def compute(self, y_true, y_pred):
-        absolute = np.absolute(y_pred - y_true)
-        return np.mean(absolute, axis=1)
-
-    def derivative(self, y_true, y_pred):
-        return (y_true - y_pred) / (y_true.shape[1] * np.absolute(y_true - y_pred))
-
-
-class AutoEncoderError(Loss):
+    """
+    Mean absolute error for regression problem
+    """
     def compute(self, y_true, y_pred):
         diff = np.subtract(y_pred, y_true)
         absolute = np.absolute(diff)
@@ -66,15 +65,9 @@ class AutoEncoderError(Loss):
         return ret
 
     def derivative(self, y_true, y_pred):
-        import autograd.numpy as np
-        from autograd import grad
-
-        def do(y_true, y_pred):
-            diff = np.subtract(y_pred, y_true)
-            absolute = np.absolute(diff)
-            whole_sum = np.sum(absolute, axis=0)
-            ret = np.mean(whole_sum)
-            return ret
-
-        grad_do = grad(do)
-        return grad_do(y_true, y_pred)
+        def do(_y_true, _y_pred):
+            diff = dnp.subtract(_y_pred, _y_true)
+            absolute = dnp.absolute(diff)
+            whole_sum = dnp.sum(absolute, axis=0)
+            return dnp.mean(whole_sum)
+        return -grad(do, 1)(y_true, y_pred)

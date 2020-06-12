@@ -7,9 +7,7 @@ This project is my Neural Network playground with Numpy.
 
 ### Requirements
 - numpy==1.18.5
-- opencv-python==4.2.0.34
-- mnist==0.2.2
-- matplotlib==3.2.1
+- autograd==1.3
 
 # Neural Networks
 - Multi class classification
@@ -25,11 +23,11 @@ This project is my Neural Network playground with Numpy.
 ```python
 from nn.data import generate_categorical_data
 from nn.activations import Relu, Softmax
-from nn.losses import CategoricalCrossEntropy
+from nn.losses import CrossEntropy
 from nn.nn import NeuralNetwork
 
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, Y.shape[0]], Relu(), Softmax(), CategoricalCrossEntropy())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, Y.shape[0]], Relu(), Softmax(), CrossEntropy())
 loss = net.train(X, Y)
 ```
 
@@ -42,10 +40,10 @@ Model's learning curve
 from nn.nn import NeuralNetwork
 from nn.data import generate_binary_data
 from nn.activations import Relu, Sigmoid
-from nn.losses import BinaryCrossEntropy
+from nn.losses import CrossEntropy
 
 X, Y = generate_binary_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, 1], Relu(), Sigmoid(), BinaryCrossEntropy())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 128, 1], Relu(), Sigmoid(), CrossEntropy())
 loss = net.train(X, Y)
 ```
 
@@ -57,14 +55,27 @@ Model's learning curve
 ```python
 from nn.data import generate_categorical_data
 from nn.activations import Relu, LinearActivation
-from nn.losses import AutoEncoderError
+from nn.losses import MeanAbsoluteError
 from nn.nn import NeuralNetwork
 
 X, Y = generate_categorical_data()
-net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), AutoEncoderError())
+net = NeuralNetwork([X.shape[0], 512, 256, 256, 512, X.shape[0]], Relu(), LinearActivation(), MeanAbsoluteError())
 loss = net.train(X, X)
 ```
 
 Model's learning curve
 
 ![alt-text](images/autoencoder.png)
+### Regression problem
+
+```python
+from nn.data import generate_regression_data
+from nn.activations import Relu, LinearActivation
+from nn.losses import MeanAbsoluteError
+from nn.nn import NeuralNetwork
+
+X, Y = generate_regression_data()
+net = NeuralNetwork([X.shape[0], 32, 1], Relu(), LinearActivation(), MeanAbsoluteError())
+loss = net.train(X, Y)
+```
+![alt-text](images/regression.png)

@@ -103,3 +103,30 @@ class AutoencoderTrainer(Trainer):
         plt.plot(x, data["val_loss"], label="val_loss")
         plt.legend()
         plt.show()
+
+
+class RegressionTrainer(Trainer):
+    def train(self, X, Y, x, y, epochs, learning_rate):
+        self.epochs = epochs
+        data = dict()
+        data["loss"] = []
+        data["val_loss"] = []
+        data["acc"] = []
+        data["val_acc"] = []
+        progress = tqdm(range(epochs))
+        for i in progress:
+            loss = self.net.train(X, Y, learning_rate=learning_rate)
+            data["loss"].append(np.mean(loss))
+            val_prediction = self.net.predict(x)
+            val_loss = self.loss_function.compute(y, val_prediction)
+            data["val_loss"].append(np.mean(val_loss))
+            progress.set_description(f"Epoch {i} loss {np.mean(loss)} val_loss {np.mean(val_loss)} ")
+        return data
+
+    def plot(self, data):
+        x = [i for i in range(self.epochs)]
+        plt.figure(figsize=(10, 10))
+        plt.plot(x, data["loss"], label="loss")
+        plt.plot(x, data["val_loss"], label="val_loss")
+        plt.legend()
+        plt.show()
