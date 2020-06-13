@@ -9,7 +9,7 @@ Result of the autoencoder (Left: Original, Middle: Latent space, Right: Reconstr
 - numpy==1.18.5
 - autograd==1.3
 
-# Neural Networks
+### Neural Networks
 - Multi class classification
 - Binary classification
 - Real valued regression
@@ -17,7 +17,7 @@ Result of the autoencoder (Left: Original, Middle: Latent space, Right: Reconstr
 - Stacked (Deep) Auto-Encoder
 - Error back-propagation multi-layer perceptron
 
-# Gradient based optimizations
+### Gradient based optimizations
 - Mini batched gradient descent
 - Gradient descent
 - Momentum driven gradient descent
