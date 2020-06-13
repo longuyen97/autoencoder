@@ -23,6 +23,7 @@ Result of the autoencoder (Left: Original, Middle: Latent space, Right: Reconstr
 - Momentum driven gradient descent
 - Nestorov driven gradient descent
 - Adagrad
+- Adam
 
 ### Categorical classification
 
